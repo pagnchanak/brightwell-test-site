@@ -41,7 +41,24 @@
     badLogin: { en: "Wrong email or password, or email not confirmed yet.", km: "អ៊ីមែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ ឬអ៊ីមែលមិនទាន់បានបញ្ជាក់។" },
     authError: { en: "Something went wrong. Please try again.", km: "មានបញ្ហាអ្វីមួយ។ សូមព្យាយាមម្ដងទៀត។" },
     loggedInAs: { en: "You are logged in as", km: "អ្នកបានចូលគណនីជា" },
-    welcomeBack: { en: "Welcome back!", km: "សូមស្វាគមន៍ការត្រឡប់មកវិញ!" }
+    welcomeBack: { en: "Welcome back!", km: "សូមស្វាគមន៍ការត្រឡប់មកវិញ!" },
+    profile: { en: "My profile", km: "ប្រវត្តិរូបខ្ញុំ" },
+    profileInfo: { en: "Personal information", km: "ព័ត៌មានផ្ទាល់ខ្លួន" },
+    fullName: { en: "Full name", km: "ឈ្មោះពេញ" },
+    gender: { en: "Gender", km: "ភេទ" },
+    genderF: { en: "Female", km: "ស្រី" },
+    genderM: { en: "Male", km: "ប្រុស" },
+    genderNone: { en: "Prefer not to say", km: "មិនចង់បញ្ជាក់" },
+    birthDate: { en: "Date of birth", km: "ថ្ងៃខែឆ្នាំកំណើត" },
+    school: { en: "School", km: "សាលារៀន" },
+    grade: { en: "Grade", km: "ថ្នាក់ទី" },
+    province: { en: "Province / city", km: "ខេត្ត / ក្រុង" },
+    save: { en: "Save", km: "រក្សាទុក" },
+    saved: { en: "Saved!", km: "បានរក្សាទុក!" },
+    changePassword: { en: "Change password", km: "ប្ដូរពាក្យសម្ងាត់" },
+    newPassword: { en: "New password", km: "ពាក្យសម្ងាត់ថ្មី" },
+    passwordChanged: { en: "Password changed!", km: "បានប្ដូរពាក្យសម្ងាត់!" },
+    needLogin: { en: "Please log in to see your profile.", km: "សូមចូលគណនីដើម្បីមើលប្រវត្តិរូបរបស់អ្នក។" }
   };
 
   var app = document.getElementById("app");
@@ -202,19 +219,67 @@
     });
   }
 
+  function renderProfile() {
+    if (!user) {
+      app.innerHTML = '<section class="auth"><p>' + t(UI.needLogin) + '</p><a class="btn" href="#/login">' + t(UI.login) + '</a></section>';
+      return;
+    }
+    var m = user.user_metadata || {};
+    function field(name, label, type, extra) {
+      return '<label>' + t(label) + '<input type="' + (type || "text") + '" name="' + name + '" value="' + esc(m[name] || "") + '" maxlength="100"' + (extra || "") + '></label>';
+    }
+    app.innerHTML = '<section class="auth wide"><h1>' + t(UI.profile) + '</h1>' +
+      '<p class="muted">' + esc(user.email) + '</p>' +
+      '<form id="profile-form"><h2>' + t(UI.profileInfo) + '</h2>' +
+      field("full_name", UI.fullName, "text", ' autocomplete="name"') +
+      '<label>' + t(UI.gender) + '<select name="gender">' +
+        [["", UI.genderNone], ["female", UI.genderF], ["male", UI.genderM]].map(function (o) {
+          return '<option value="' + o[0] + '"' + (m.gender === o[0] ? " selected" : "") + '>' + t(o[1]) + '</option>';
+        }).join("") + '</select></label>' +
+      field("birth_date", UI.birthDate, "date", ' autocomplete="bday"') +
+      field("school", UI.school) + field("grade", UI.grade) + field("province", UI.province) +
+      '<button class="btn" type="submit">' + t(UI.save) + '</button><div class="msg" id="profile-msg" role="status"></div></form>' +
+      '<form id="pw-form"><h2>' + t(UI.changePassword) + '</h2>' +
+      '<label>' + t(UI.newPassword) + '<input type="password" name="password" required minlength="6" autocomplete="new-password" placeholder="' + t(UI.password6) + '"></label>' +
+      '<button class="btn" type="submit">' + t(UI.changePassword) + '</button><div class="msg" id="pw-msg" role="status"></div></form></section>';
+
+    function wire(formId, msgId, doneText, build) {
+      var f = document.getElementById(formId), msg = document.getElementById(msgId);
+      f.addEventListener("submit", function (e) {
+        e.preventDefault();
+        msg.className = "msg"; msg.textContent = t(UI.wait);
+        sb.auth.updateUser(build(f)).then(function (r) {
+          if (r.error) { msg.className = "msg bad"; msg.textContent = r.error.message || t(UI.authError); return; }
+          if (r.data && r.data.user) user = r.data.user;
+          msg.className = "msg ok"; msg.textContent = t(doneText);
+          if (formId === "pw-form") f.reset();
+        }).catch(function () { msg.className = "msg bad"; msg.textContent = t(UI.authError); });
+      });
+    }
+    wire("profile-form", "profile-msg", UI.saved, function (f) {
+      var d = {};
+      ["full_name", "gender", "birth_date", "school", "grade", "province"].forEach(function (k) { d[k] = f[k].value.trim(); });
+      return { data: d };
+    });
+    wire("pw-form", "pw-msg", UI.passwordChanged, function (f) { return { password: f.password.value }; });
+  }
+
   function applyAuthNav() {
     var a = document.getElementById("nav-auth");
     a.textContent = t(user ? UI.logout : UI.login);
     a.setAttribute("href", user ? "#/logout" : "#/login");
+    var pn = document.getElementById("nav-profile");
+    pn.textContent = t(UI.profile);
+    pn.hidden = !user;
   }
 
   if (sb) {
-    sb.auth.getSession().then(function (r) { user = r.data.session ? r.data.session.user : null; applyAuthNav(); });
+    sb.auth.getSession().then(function (r) { user = r.data.session ? r.data.session.user : null; applyAuthNav(); if (location.hash === "#/profile") route(); });
     sb.auth.onAuthStateChange(function (_e, session) {
       var was = !!user;
       user = session ? session.user : null;
       applyAuthNav();
-      if (was !== !!user && /^#\/(login|signup)?$/.test(location.hash || "#/login")) route();
+      if (was !== !!user && /^#\/(login|signup|profile)?$/.test(location.hash || "#/login")) route();
     });
   }
 
@@ -226,6 +291,7 @@
     else if (parts[0] === "course") renderCourse(parts[1]);
     else if (parts[0] === "lesson") renderLesson(parts[1], parts[2]);
     else if (parts[0] === "login" || parts[0] === "signup") renderAuth(parts[0]);
+    else if (parts[0] === "profile") renderProfile();
     else if (parts[0] === "logout") {
       (sb ? sb.auth.signOut() : Promise.resolve()).then(function () { user = null; applyAuthNav(); location.hash = "#/"; });
     }
