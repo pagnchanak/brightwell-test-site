@@ -20,7 +20,7 @@ window.COURSES = [
         video: "",
         content: {
           en: "<p>Water on Earth is always moving. The Sun heats oceans, rivers and lakes, and the water <b>evaporates</b> into the air as vapor.</p><p>High in the sky the vapor cools and <b>condenses</b> into tiny droplets that form clouds. When the droplets get heavy, they fall as <b>precipitation</b>: rain, hail or snow. The water flows back to rivers and the sea, and the cycle begins again.</p>",
-          km: "<p>ទឹកនៅលើផែនដីតែងតែចលនា។ ព្រះអាទិត្យធ្វើឱ្យមហាសមុទ្រ ទន្លេ និងបឹងឡើងកម្ដៅ ហើយទឹក<b>ហួត</b>ចូលទៅក្នុងខ្យល់ជាចំហាយ។</p><p>នៅលើមេឃខ្ពស់ ចំហាយត្រជាក់ និង<b>ខាប់</b>ទៅជាតំណក់ទឹកតូចៗដែលបង្កើតជាពពក។ ពេលតំណក់ទឹកធ្ងន់ វាធ្លាក់មកវិញជា<b>ទឹកភ្លៀង</b> ព្រឹលកករ ឬព្រិល។ ទឹកហូរត្រឡប់ទៅទន្លេ និងសមុទ្រវិញ ហើយវដ្តចាប់ផ្ដើមម្ដងទៀត។</p>"
+          km: "<p>ទឹកនៅលើផែនដីតែងតែចលនា។ ព្រះអាទិត្យធ្វើឱ្យមហាសមុទ្រ ទន្លេ និងបឹងឡើងកម្ដៅ ហើយទឹក<b>ហួត</b>ចូលទៅក្នុងខ្យល់ជាចំហាយ។</p><p>នៅលើមេឃខ្ពស់ ចំហាយត្រជាក់ និង<b>ខាប់</b>ទៅជាតំណក់ទឹកតូចៗដែលបង្កើតជាពពក។ ពេលតំណក់ទឹកធ្ងន់ វាធ្លាក់មកវិញជា<b>ទឹកភ្លៀង</b> ព្រឹល ឬព្រិល។ ទឹកហូរត្រឡប់ទៅទន្លេ និងសមុទ្រវិញ ហើយវដ្តចាប់ផ្ដើមម្ដងទៀត។</p>"
         },
         quiz: [
           {

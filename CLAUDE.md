@@ -19,7 +19,7 @@
 - `data/courses.js`: courses, lessons, quizzes (3 starter courses: Science Basics, Discover Cambodia, Study Skills)
 
 ## Status
-- The first version of all files is written but **has not been viewed in a browser yet**. Open it, test the language toggle, the lessons, the quizzes and the progress bars, then fix any bugs.
+- The first version of all files is written but **was tested in a browser (language toggle, lessons, quizzes, progress): all worked**. Quiz no longer reveals the right answer after a wrong try.
 - The Khmer text was written by an AI and **needs review by a native speaker**.
 - Not yet published. Next step: enable GitHub Pages (Settings → Pages → Deploy from branch → `main` / root) and give the owner the live link.
 
