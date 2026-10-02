@@ -83,3 +83,12 @@ h2 { margin-top: 36px; }
 .result { font-weight: 700; margin: 12px 0; }
 .nav-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
 .footer { text-align: center; color: var(--muted); padding: 24px; font-size: .9rem; border-top: 1px solid var(--border); }
+.auth { max-width: 420px; margin: 20px auto; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+.auth h1 { margin-top: 0; }
+.auth label { display: block; font-weight: 600; margin-bottom: 14px; }
+.auth input { display: block; width: 100%; margin-top: 6px; padding: 12px; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 10px; }
+.auth input:focus { outline: 2px solid var(--primary); border-color: transparent; }
+.auth .btn { width: 100%; }
+.msg { margin: 12px 0 0; font-weight: 600; }
+.msg.ok { color: var(--ok); } .msg.bad { color: var(--bad); }
+.switch { text-align: center; margin: 18px 0 0; color: var(--muted); }

@@ -26,7 +26,22 @@
     next: { en: "Next →", km: "បន្ទាប់ →" },
     back: { en: "← Back to course", km: "← ត្រឡប់ទៅមុខវិជ្ជា" },
     notFound: { en: "Page not found.", km: "រកមិនឃើញទំព័រ។" },
-    footer: { en: "Free education for everyone.", km: "ការអប់រំឥតគិតថ្លៃសម្រាប់ទាំងអស់គ្នា។" }
+    footer: { en: "Free education for everyone.", km: "ការអប់រំឥតគិតថ្លៃសម្រាប់ទាំងអស់គ្នា។" },
+    login: { en: "Log in", km: "ចូលគណនី" },
+    logout: { en: "Log out", km: "ចាកចេញ" },
+    signup: { en: "Sign up", km: "ចុះឈ្មោះ" },
+    email: { en: "Email", km: "អ៊ីមែល" },
+    password: { en: "Password", km: "ពាក្យសម្ងាត់" },
+    password6: { en: "At least 6 characters", km: "យ៉ាងតិច ៦ តួអក្សរ" },
+    noAccount: { en: "No account yet?", km: "មិនទាន់មានគណនី?" },
+    haveAccount: { en: "Already have an account?", km: "មានគណនីរួចហើយ?" },
+    authOff: { en: "Login is not set up yet. Please try again later.", km: "ប្រព័ន្ធចូលគណនីមិនទាន់រួចរាល់ទេ។ សូមព្យាយាមម្ដងទៀតនៅពេលក្រោយ។" },
+    wait: { en: "Please wait…", km: "សូមរង់ចាំ…" },
+    checkEmail: { en: "Account created! Check your email and click the link to confirm, then log in.", km: "បានបង្កើតគណនី! សូមពិនិត្យអ៊ីមែលរបស់អ្នក ហើយចុចតំណដើម្បីបញ្ជាក់ រួចចូលគណនី។" },
+    badLogin: { en: "Wrong email or password, or email not confirmed yet.", km: "អ៊ីមែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ ឬអ៊ីមែលមិនទាន់បានបញ្ជាក់។" },
+    authError: { en: "Something went wrong. Please try again.", km: "មានបញ្ហាអ្វីមួយ។ សូមព្យាយាមម្ដងទៀត។" },
+    loggedInAs: { en: "You are logged in as", km: "អ្នកបានចូលគណនីជា" },
+    welcomeBack: { en: "Welcome back!", km: "សូមស្វាគមន៍ការត្រឡប់មកវិញ!" }
   };
 
   var app = document.getElementById("app");
@@ -145,6 +160,64 @@
 
   function renderNotFound() { app.innerHTML = '<p>' + t(UI.notFound) + '</p>'; }
 
+  // ---------- Login / sign up (Supabase) ----------
+  var sb = null, user = null;
+  if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+    try { sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY); } catch (e) { sb = null; }
+  }
+
+  function renderAuth(mode) {
+    var isLogin = mode === "login";
+    if (user) {
+      app.innerHTML = '<section class="auth"><h1>' + t(UI.welcomeBack) + '</h1><p>' + t(UI.loggedInAs) + ' <b>' + esc(user.email) + '</b></p>' +
+        '<a class="btn" href="#/courses">' + t(UI.start) + '</a></section>';
+      return;
+    }
+    app.innerHTML = '<section class="auth"><h1>' + t(isLogin ? UI.login : UI.signup) + '</h1>' +
+      (sb ? '' : '<p class="msg bad">' + t(UI.authOff) + '</p>') +
+      '<form id="auth-form">' +
+      '<label>' + t(UI.email) + '<input type="email" name="email" required autocomplete="email"></label>' +
+      '<label>' + t(UI.password) + '<input type="password" name="password" required minlength="6" autocomplete="' + (isLogin ? "current-password" : "new-password") + '"' + (isLogin ? '' : ' placeholder="' + t(UI.password6) + '"') + '></label>' +
+      '<button class="btn" type="submit"' + (sb ? '' : ' disabled') + '>' + t(isLogin ? UI.login : UI.signup) + '</button>' +
+      '<div class="msg" id="auth-msg" role="status"></div></form>' +
+      '<p class="switch">' + t(isLogin ? UI.noAccount : UI.haveAccount) + ' <a href="#/' + (isLogin ? "signup" : "login") + '">' + t(isLogin ? UI.signup : UI.login) + '</a></p></section>';
+    var form = document.getElementById("auth-form"), msg = document.getElementById("auth-msg");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!sb) return;
+      var email = form.email.value.trim(), password = form.password.value;
+      msg.className = "msg"; msg.textContent = t(UI.wait);
+      var req = isLogin ? sb.auth.signInWithPassword({ email: email, password: password })
+                        : sb.auth.signUp({ email: email, password: password });
+      req.then(function (r) {
+        if (r.error) {
+          msg.className = "msg bad";
+          msg.textContent = isLogin && /invalid|confirm/i.test(r.error.message) ? t(UI.badLogin) : r.error.message || t(UI.authError);
+        } else if (!isLogin && !r.data.session) {
+          msg.className = "msg ok"; msg.textContent = t(UI.checkEmail); form.reset();
+        } else {
+          location.hash = "#/courses";
+        }
+      }).catch(function () { msg.className = "msg bad"; msg.textContent = t(UI.authError); });
+    });
+  }
+
+  function applyAuthNav() {
+    var a = document.getElementById("nav-auth");
+    a.textContent = t(user ? UI.logout : UI.login);
+    a.setAttribute("href", user ? "#/logout" : "#/login");
+  }
+
+  if (sb) {
+    sb.auth.getSession().then(function (r) { user = r.data.session ? r.data.session.user : null; applyAuthNav(); });
+    sb.auth.onAuthStateChange(function (_e, session) {
+      var was = !!user;
+      user = session ? session.user : null;
+      applyAuthNav();
+      if (was !== !!user && /^#\/(login|signup)?$/.test(location.hash || "#/login")) route();
+    });
+  }
+
   // ---------- Router ----------
   function route() {
     var parts = (location.hash || "#/").slice(2).split("/");
@@ -152,6 +225,10 @@
     else if (parts[0] === "courses") renderCourses();
     else if (parts[0] === "course") renderCourse(parts[1]);
     else if (parts[0] === "lesson") renderLesson(parts[1], parts[2]);
+    else if (parts[0] === "login" || parts[0] === "signup") renderAuth(parts[0]);
+    else if (parts[0] === "logout") {
+      (sb ? sb.auth.signOut() : Promise.resolve()).then(function () { user = null; applyAuthNav(); location.hash = "#/"; });
+    }
     else renderNotFound();
   }
 
@@ -162,6 +239,7 @@
     document.getElementById("nav-home").textContent = t(UI.home);
     document.getElementById("nav-courses").textContent = t(UI.courses);
     document.getElementById("lang-toggle").textContent = t(UI.otherLang);
+    applyAuthNav();
     document.getElementById("footer-text").textContent = "© " + new Date().getFullYear() + " " + t(UI.siteName) + " · " + t(UI.footer);
   }
 
