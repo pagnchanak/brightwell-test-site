@@ -16,6 +16,7 @@
 - `index.html`: page shell
 - `style.css`: styling
 - `app.js`: router, translations (the `UI` object), progress, quiz logic
+- `config.js`: Supabase URL + anon key for login (empty until the owner creates a free Supabase project)
 - `data/courses.js`: courses, lessons, quizzes (3 starter courses: Science Basics, Discover Cambodia, Study Skills)
 
 ## Status
@@ -23,8 +24,12 @@
 - The Khmer text was written by an AI and **needs review by a native speaker**.
 - Not yet published. Next step: enable GitHub Pages (Settings → Pages → Deploy from branch → `main` / root) and give the owner the live link.
 
+## Login (built, needs Supabase keys)
+- Login / Sign up / Log out pages (`#/login`, `#/signup`) use Supabase email + password via supabase-js from a CDN. Tested with a mock; not yet with a real project.
+- Progress is still saved per browser; cross-device progress is not built yet.
+
 ## Possible later features (do not build unless asked)
-- Supabase (free tier) for login and cross-device progress
+- Cross-device progress saved in Supabase
 - More courses and YouTube videos (`video` field per lesson)
 - Certificates, a search box, an admin page
 - A custom domain
