@@ -127,7 +127,7 @@
           opts.forEach(function (inp, oi) {
             var label = inp.parentNode;
             label.classList.remove("right", "wrong");
-            if (oi === q.answer) label.classList.add("right");
+            if (inp.checked && oi === q.answer) label.classList.add("right");
             else if (inp.checked) label.classList.add("wrong");
             if (inp.checked && oi === q.answer) correct++;
           });
