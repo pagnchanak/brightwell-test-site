@@ -97,7 +97,7 @@
 
   function renderHome() {
     app.innerHTML =
-      '<section class="hero"><h1>' + t(UI.heroTitle) + '</h1><p>' + t(UI.heroText) + '</p>' +
+      '<section class="hero"><img class="hero-logo" src="logo.png" alt="Brightwell School" width="140" height="140"><h1>' + t(UI.heroTitle) + '</h1><p>' + t(UI.heroText) + '</p>' +
       '<a class="btn" href="#/courses">' + t(UI.start) + '</a></section>' +
       '<div class="grid">' + window.COURSES.map(courseCard).join("") + '</div>';
   }
@@ -301,7 +301,7 @@
   function applyChrome() {
     document.documentElement.lang = lang;
     document.title = t(UI.siteName);
-    document.getElementById("brand").textContent = "🎓 " + t(UI.siteName);
+    document.getElementById("brand").innerHTML = '<img class="logo" src="logo.png" alt="Brightwell School" width="36" height="36"> <span>' + esc(t(UI.siteName)) + '</span>';
     document.getElementById("nav-home").textContent = t(UI.home);
     document.getElementById("nav-courses").textContent = t(UI.courses);
     document.getElementById("lang-toggle").textContent = t(UI.otherLang);
