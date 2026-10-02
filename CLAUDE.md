@@ -26,6 +26,7 @@
 
 ## Login (built, keys added)
 - Login / Sign up / Log out pages (`#/login`, `#/signup`) use Supabase email + password via supabase-js from a CDN. Tested with a mock; not yet against the real project (the build sandbox blocks supabase.co).
+- Profile page (`#/profile`): name, gender, date of birth, school, grade, province, plus change password. Saved in Supabase user metadata (no database table needed). Tested with a mock only.
 - Progress is still saved per browser; cross-device progress is not built yet.
 
 ## Possible later features (do not build unless asked)
