@@ -1,0 +1,5 @@
+Paste this into Claude Code on the web (claude.ai/code) after selecting your repository:
+
+---
+Read CLAUDE.md and continue the project. If the site files already exist in this repo (index.html, style.css, app.js, data/courses.js), review and test them, fix any bugs, and then publish with GitHub Pages from the main branch. If the files are missing, rebuild the site from the description in CLAUDE.md (if CLAUDE.md is missing too, build a free static learning website: Khmer + English with a language toggle, general-knowledge courses for students, lessons with quizzes, progress saved in the browser, no build step, ready for GitHub Pages). I am not a programmer, so explain each step simply, commit and push the work, and tell me the live URL when it is done.
+---
